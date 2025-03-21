@@ -23,14 +23,30 @@ jobs:
         working-directory: ./ppinfra
         run: npm install
 
-      - uses: pulumi/actions@v5
+      # Use Pulumi Action to run the Pulumi stack
+      - name: Run Pulumi up
+        uses: pulumi/actions@v5
         with:
-          command: destroy
+          command: up
           stack-name: Melda-17/mypulumi/dev  # Update this to match the project name in Pulumi.yaml
           work-dir: ./ppinfra
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
-          # If you do not have Pulumi ESC configured then uncomment:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+          AWS_ROLE_ARN: arn:aws:iam::123456789012:role/GitHubActionsPulumiRole  # Use the ARN of the role you've set up for OIDC
+          AWS_WEB_IDENTITY_TOKEN_FILE: /path-to-web-identity-token  # GitHub provides the token automatically, you can reference it here
+          # The following AWS credentials are no longer needed if you are using OIDC.
+          # AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          # AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          # AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+
+      # Optional: you can add additional steps for "pulumi destroy" if needed
+      - name: Run Pulumi destroy (if needed)
+        uses: pulumi/actions@v5
+        with:
+          command: destroy
+          stack-name: Melda-17/mypulumi/dev
+          work-dir: ./ppinfra
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+          AWS_ROLE_ARN: arn:aws:iam::123456789012:role/GitHubActionsPulumiRole  # Same IAM role ARN for OIDC
+          AWS_WEB_IDENTITY_TOKEN_FILE: /path-to-web-identity-token  # Token path for OIDC
