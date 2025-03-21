@@ -26,12 +26,11 @@ jobs:
       - uses: pulumi/actions@v5
         with:
           command: destroy
-          stack-name: Melda-17/pulumi-project/dev
-          work-dir: ./ppinfra
+          stack-name: Melda-17/mypulumi/dev
+          working-directory: ./ppinfra
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
           # If you do not have Pulumi ESC configured then uncomment: 
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
-
