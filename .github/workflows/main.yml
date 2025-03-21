@@ -33,7 +33,7 @@ jobs:
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
           AWS_ROLE_ARN: arn:aws:iam::307946680839:role/pulumi  # Use the ARN of the role you've set up for OIDC
-          AWS_WEB_IDENTITY_TOKEN_FILE: /path-to-web-identity-token  # GitHub provides the token automatically, you can reference it here
+          AWS_WEB_IDENTITY_TOKEN_FILE: ${{ env.AWS_WEB_IDENTITY_TOKEN_FILE }}  # GitHub provides the token automatically, you can reference it here
           # The following AWS credentials are no longer needed if you are using OIDC.
           # AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           # AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -49,4 +49,4 @@ jobs:
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
           AWS_ROLE_ARN: arn:aws:iam::307946680839:role/pulumi  # Same IAM role ARN for OIDC
-          AWS_WEB_IDENTITY_TOKEN_FILE: /path-to-web-identity-token  # Token path for OIDC
+          AWS_WEB_IDENTITY_TOKEN_FILE: ${{ env.AWS_WEB_IDENTITY_TOKEN_FILE }}  # Token path for OIDC
