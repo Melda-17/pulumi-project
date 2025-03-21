@@ -26,7 +26,7 @@ jobs:
       - uses: pulumi/actions@v5
         with:
           command: destroy
-          stack-name: pulumi-project/dev  # Update this to match the project name in Pulumi.yaml
+          stack-name: Melda-17/mypulumi/dev  # Update this to match the project name in Pulumi.yaml
           work-dir: ./ppinfra
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
