@@ -6,10 +6,6 @@ on:
       - main
   workflow_dispatch:
 
-  permissions:
-    id-token: write  # Enables OIDC authentication
-    contents: read
-
 jobs:
   pulumi-up:
     name: pulumi-up
