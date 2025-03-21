@@ -6,10 +6,17 @@ on:
       - main
   workflow_dispatch:
 
+  permissions:
+    id-token: write  # Enables OIDC authentication
+    contents: read
+
 jobs:
   pulumi-up:
     name: pulumi-up
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # Enables OIDC authentication
+      contents: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -23,23 +30,21 @@ jobs:
         working-directory: ./ppinfra
         run: npm install
 
-      # Use Pulumi Action to run the Pulumi stack
+      - name: Configure AWS Credentials for OIDC
+        run: echo "AWS_WEB_IDENTITY_TOKEN_FILE=/var/run/secrets/eks.amazonaws.com/serviceaccount/token" >> $GITHUB_ENV
+
       - name: Run Pulumi up
         uses: pulumi/actions@v5
         with:
           command: up
-          stack-name: Melda-17/mypulumi/dev  # Update this to match the project name in Pulumi.yaml
+          stack-name: Melda-17/mypulumi/dev
           work-dir: ./ppinfra
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
-          AWS_ROLE_ARN: arn:aws:iam::307946680839:role/pulumi  # Use the ARN of the role you've set up for OIDC
-          AWS_WEB_IDENTITY_TOKEN_FILE: ${{ env.AWS_WEB_IDENTITY_TOKEN_FILE }}  # GitHub provides the token automatically, you can reference it here
-          # The following AWS credentials are no longer needed if you are using OIDC.
-          # AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          # AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          # AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+          AWS_ROLE_ARN: arn:aws:iam::307946680839:role/pulumi
+          AWS_REGION: us-east-1  # Set AWS region
+          AWS_WEB_IDENTITY_TOKEN_FILE: ${{ env.AWS_WEB_IDENTITY_TOKEN_FILE }}
 
-      # Optional: you can add additional steps for "pulumi destroy" if needed
       - name: Run Pulumi destroy (if needed)
         uses: pulumi/actions@v5
         with:
@@ -48,5 +53,6 @@ jobs:
           work-dir: ./ppinfra
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
-          AWS_ROLE_ARN: arn:aws:iam::307946680839:role/pulumi  # Same IAM role ARN for OIDC
-          AWS_WEB_IDENTITY_TOKEN_FILE: ${{ env.AWS_WEB_IDENTITY_TOKEN_FILE }}  # Token path for OIDC
+          AWS_ROLE_ARN: arn:aws:iam::307946680839:role/pulumi
+          AWS_REGION: us-east-1
+          AWS_WEB_IDENTITY_TOKEN_FILE: ${{ env.AWS_WEB_IDENTITY_TOKEN_FILE }}
